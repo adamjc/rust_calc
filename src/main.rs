@@ -1,23 +1,9 @@
 use std::env;
+use std::collections::HashMap;
 
-fn multiply (a: f32, b: f32) -> f32 {
-    return a * b;
-}
-
-fn add (a: f32, b: f32) -> f32 {
-    return a + b;
-}
-
-fn divide (a: f32, b: f32) -> f32 {
-    return a / b;
-}
-
-fn subtract (a: f32, b: f32) -> f32 {
-    return a - b;
-}
-
-fn exponent (a: f32, b: f32) -> f32 {
-    return a.powf(b);
+struct Operator {
+    precedence: i32,
+    func: Box<Fn(f32, f32) -> f32>
 }
 
 fn main () {
@@ -25,6 +11,33 @@ fn main () {
     let tokens: Vec<&str> = args[1].split(" ").collect();
     let mut output: Vec<i32> = vec![];
     let mut operator: Vec<_> = vec![];
+
+    let multiply = Operator {
+        precedence: 3,
+        func: Box::new(move |a: f32, b:f32| a * b)
+    };
+
+    let divide = Operator {
+        precedence: 3,
+        func: Box::new(move |a: f32, b:f32| a / b)
+    };
+
+    let add = Operator {
+        precedence: 4,
+        func: Box::new(move |a: f32, b:f32| a + b)
+    };
+
+    let subtract = Operator {
+        precedence: 4,
+        func: Box::new(move |a: f32, b:f32| a - b)
+    };
+
+    let mut operators: HashMap<char, Operator> = HashMap::new();
+
+    operators.insert('*', multiply);
+    operators.insert('/', divide);
+    operators.insert('+', add);
+    operators.insert('-', subtract);
 
     for i in 1..tokens.len() {
         let r = tokens[i].parse::<i32>();

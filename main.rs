@@ -1,6 +1,8 @@
 use std::env;
 
-
+fn multiply () {
+    
+}
 
 fn main () {
     let args: Vec<_> = env::args().collect();

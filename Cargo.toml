@@ -1,0 +1,6 @@
+[package]
+name = "rust_calc"
+version = "0.1.0"
+authors = ["Adam Cook <Adam.Cook@bbc.co.uk>"]
+
+[dependencies]

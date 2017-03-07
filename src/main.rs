@@ -44,25 +44,31 @@ fn main () {
     let mut output: Vec<String> = vec![];
     let operators = get_operators();
 
-    for t in tokens {
-        let maybeInt = t.parse::<i32>();
+    for token in tokens {
+        let maybe_int = token.parse::<i32>();
 
-        match maybeInt {
-            Ok(a) => output.push(t.to_string()),
-            Err(a) => {
-                if operator_stack.len() > 0 {
-                    let mut operator_char = t.to_string().pop().unwrap();
-                    let o1 = operators.get(&operator_char).unwrap();
-                    operator_char = operator_stack[operator_stack.len()];
-                    let o2 = operators.get(&operator_char).unwrap();
+        match maybe_int {
+            Ok(_) => output.push(token.to_string()),
+            Err(_) => {
+                let mut o1_char = token.to_string().pop().unwrap();
+                let o1 = operators.get(&o1_char).unwrap();
+
+                if !operator_stack.is_empty() {
+                    o1_char = operator_stack[0];
+                    let o2 = operators.get(&o1_char).unwrap();
 
                     if o1.precedence <= o2.precedence {
                         let o2_char = operator_stack.pop().unwrap().to_string();
                         output.push(o2_char);
+                    } else {
+                        operator_stack.push(o1_char);
                     }
-
+                } else {
+                    operator_stack.push(o1_char);
                 }
             }
         }
     }
+
+    println!("{:?}", output);
 }

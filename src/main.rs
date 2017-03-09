@@ -50,24 +50,28 @@ fn main () {
         match maybe_int {
             Ok(_) => output.push(token.to_string()),
             Err(_) => {
-                let mut o1_char = token.to_string().pop().unwrap();
+                let o1_char = token.to_string().pop().unwrap();
                 let o1 = operators.get(&o1_char).unwrap();
 
-                if !operator_stack.is_empty() {
-                    o1_char = operator_stack[0];
-                    let o2 = operators.get(&o1_char).unwrap();
-
-                    if o1.precedence <= o2.precedence {
-                        let o2_char = operator_stack.pop().unwrap().to_string();
-                        output.push(o2_char);
+                while !operator_stack.is_empty() {
+                    let o2_char = operator_stack[operator_stack.len() - 1];
+                    let o2 = operators.get(&o2_char).unwrap();
+                    if o1.precedence >= o2.precedence {
+                        let popped_o2_char = operator_stack.pop().unwrap().to_string();
+                        output.push(popped_o2_char);
                     } else {
-                        operator_stack.push(o1_char);
+                        break;
                     }
-                } else {
-                    operator_stack.push(o1_char);
                 }
+
+                operator_stack.push(o1_char);
             }
         }
+    }
+
+    while !operator_stack.is_empty() {
+        let op = operator_stack.pop().unwrap().to_string();
+        output.push(op);
     }
 
     println!("{:?}", output);

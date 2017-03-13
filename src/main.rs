@@ -1,6 +1,6 @@
 use std::env;
 use std::collections::HashMap;
-#[allow(dead_code)]
+
 struct Operator {
     precedence: i32,
     func: Box<Fn(f32, f32) -> f32>
@@ -74,5 +74,25 @@ fn main () {
         output.push(op);
     }
 
-    println!("{:?}", output);
+    output.reverse();
+
+    let mut stack: Vec<f32> = vec![];
+    while !output.is_empty() {        
+        let element = output.pop().unwrap();
+        let maybe_int = element.parse::<f32>();
+        match maybe_int {
+            Ok(x) => stack.push(x),
+            Err(_) => {
+                let op_char = element.to_string().pop().unwrap();
+                let op = operators.get(&op_char).unwrap();
+
+                let b: f32 = stack.pop().unwrap();
+                let a: f32 = stack.pop().unwrap();
+                let r: f32 = (op.func)(a, b);
+                stack.push(r);
+            }
+        }
+    }
+
+    println!("{:?}", stack.pop().unwrap());
 }
